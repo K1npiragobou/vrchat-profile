@@ -3,441 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VRChat Profile - あなたの名前</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: white;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .profile-header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .avatar-container {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .avatar-container:hover {
-            transform: scale(1.05);
-        }
-
-        .username {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .status {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #4CAF50;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-
-        .bio {
-            font-size: 1.1em;
-            line-height: 1.6;
-            opacity: 0.9;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .info-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-title {
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-content {
-            line-height: 1.6;
-        }
-
-        .avatar-list, .world-list {
-            list-style: none;
-        }
-
-        .avatar-list li, .world-list li {
-            background: rgba(255, 255, 255, 0.1);
-            margin: 8px 0;
-            padding: 10px 15px;
-            border-radius: 10px;
-            transition: background 0.3s ease;
-        }
-
-        .avatar-list li:hover, .world-list li:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .social-btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            text-decoration: none;
-            color: white;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .social-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .edit-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .edit-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            color: #333;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .form-group textarea {
-            height: 80px;
-            resize: vertical;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s ease;
-        }
-
-        .btn-primary {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #45a049;
-        }
-
-        .btn-secondary {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #da190b;
-        }
-
-        @media (max-width: 768px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .social-links {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+    <title>Your Name - Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <div class="profile-header">
-            <div class="avatar-container" id="avatarContainer">
-                🎭
-            </div>
-            <h1 class="username" id="username">VRChatユーザー</h1>
-            <div class="status" id="status">🟢 オンライン</div>
-            <p class="bio" id="bio">VRChatを楽しんでいます！色々なワールドを探索して、新しい人との出会いを大切にしています。</p>
-        </div>
+        <!-- Header -->
+        <header class="header">
+            <h1>Your Name</h1>
+            <p>情報系学生 | VRChat Creator</p>
+        </header>
 
-        <div class="info-grid">
-            <div class="info-card">
-                <h3 class="card-title">
-                    🎨 お気に入りアバター
-                </h3>
-                <div class="card-content">
-                    <ul class="avatar-list" id="avatarList">
-                        <li>🦊 キツネちゃん - かわいい系</li>
-                        <li>🤖 サイバーアバター - クール系</li>
-                        <li>👗 エレガントドレス - フォーマル</li>
-                    </ul>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Sidebar - Twitter Feed -->
+             
+            <aside class="left-sidebar">
+                <!-- Blog Section -->
+                <div class="blog-section">
+                    <h3><i class="fas fa-blog"></i> ブログ</h3>
+                    <div class="blog-posts">
+                        <!-- JSで動的に挿入されます -->
+                    </div>
+                    <div class="blog-more">
+                        <a href="#" class="btn-more">noteで更多記事を見る <i class="fas fa-external-link-alt"></i></a>
+                    </div>
                 </div>
-            </div>
-
-            <div class="info-card">
-                <h3 class="card-title">
-                    🌍 よく行くワールド
-                </h3>
-                <div class="card-content">
-                    <ul class="world-list" id="worldList">
-                        <li>🏠 Home - まったりスペース</li>
-                        <li>🎵 Club系ワールド - ダンス＆音楽</li>
-                        <li>🏞️ 景色の良いワールド - 写真撮影</li>
-                        <li>🎮 ゲームワールド - みんなで遊ぶ</li>
-                    </ul>
+                <div class="widget">
+                    <h3><i class="fab fa-twitter"></i> 最新ツイート</h3>
+                    <a class="twitter-timeline" data-height="400" href="https://x.com/k1npira_vrc">Tweets by your_twitter</a>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </div>
-            </div>
+            </aside>
 
-            <div class="info-card">
-                <h3 class="card-title">
-                    ⚡ アクティビティ
-                </h3>
-                <div class="card-content" id="activities">
-                    <p>📸 写真撮影が大好き</p>
-                    <p>🎵 音楽イベント参加</p>
-                    <p>👥 新しい人との交流</p>
-                    <p>🎮 ミニゲームで遊ぶ</p>
+            <!-- Center - Profile -->
+            <section class="center-content">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <img src="https://via.placeholder.com/150/4A90E2/FFFFFF?text=Your+Photo" alt="プロフィール写真" class="profile-image">
+                        <h2>Your Name</h2>
+                        <p class="profile-subtitle">情報系学生 & VRChat Creator</p>
+                    </div>
+                    
+                    <div class="profile-content">
+                        <h3>自己紹介</h3>
+                        <p>
+                            こんにちは！情報系を学ぶ学生で、趣味でVRChatを楽しんでいます。
+                            最近HTML、CSS、JavaScriptを習得し、Webデザインとプログラミングの世界に魅力を感じています。
+                            VRChatでのクリエイティブ活動を通じて、より多くの人とつながりたいと思っています。
+                        </p>
+                        
+                        <h3>スキル</h3>
+                        <div class="skills">
+                            <span class="skill-tag">HTML</span>
+                            <span class="skill-tag">CSS</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">VRChat World Creation</span>
+                            <span class="skill-tag">Unity</span>
+                        </div>
+                        
+                        <h3>SNSリンク</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link twitter">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                            <a href="#" class="social-link github">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="#" class="social-link note">
+                                <i class="fas fa-edit"></i> note
+                            </a>
+                            <a href="#" class="social-link vrchat">
+                                <i class="fas fa-vr-cardboard"></i> VRChat
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="info-card">
-                <h3 class="card-title">
-                    📱 SNS・連絡先
-                </h3>
-                <div class="card-content" id="contacts">
-                    <p>🐦 Twitter: @your_twitter</p>
-                    <p>📷 Instagram: @your_instagram</p>
-                    <p>💬 Discord: YourName#1234</p>
+                
+            </section>
+
+            <!-- Right Sidebar - Game Stats & Drama Progress -->
+            <aside class="right-sidebar">
+                <div class="widget">
+                    <h3><i class="fas fa-gamepad"></i> ゲームランク</h3>
+                    <div class="game-stats">
+                        <div class="game-item" id="valorant">
+                            <h4>Valorant</h4>
+                            <div class="rank-info">
+                                <span class="rank"></span>
+                                <span class="rr"></span>
+                            </div>
+                            <canvas id="valorantChart" width="200" height="100"></canvas>
+                        </div>
+                        <div class="game-item" id="apex">
+                            <h4>Apex Legends</h4>
+                            <div class="rank-info">
+                                <span class="rank"></span>
+                                <span class="rr"></span>
+                            </div>
+                            <canvas id="apexChart" width="200" height="100"></canvas>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="social-links">
-            <a href="#" class="social-btn">🐦 Twitter</a>
-            <a href="#" class="social-btn">📷 Instagram</a>
-            <a href="#" class="social-btn">💬 Discord</a>
-        </div>
+                <div class="widget">
+                    <h3><i class="fas fa-tv"></i> 視聴中ドラマ</h3>
+                    <div class="drama-progress">
+                        <!-- JSで動的に更新される -->
+                        <div class="drama-item">
+                            <h4>ドラマタイトル1</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text"></span>
+                        </div>
+                        <div class="drama-item">
+                            <h4>ドラマタイトル2</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text"></span>
+                        </div>
+                        <div class="drama-item">
+                            <h4>ドラマタイトル3</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; Footer</p>
+        </footer>
     </div>
 
-    <button class="edit-btn" onclick="openEditModal()">✏️ 編集</button>
-
-    <!-- 編集モーダル -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <h2>プロフィール編集</h2>
-            <form id="editForm">
-                <div class="form-group">
-                    <label>ユーザー名</label>
-                    <input type="text" id="editUsername" placeholder="あなたの名前">
-                </div>
-                <div class="form-group">
-                    <label>ステータス</label>
-                    <input type="text" id="editStatus" placeholder="🟢 オンライン">
-                </div>
-                <div class="form-group">
-                    <label>自己紹介</label>
-                    <textarea id="editBio" placeholder="自己紹介文を入力してください"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>アバター絵文字</label>
-                    <input type="text" id="editAvatar" placeholder="🎭" maxlength="2">
-                </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" onclick="saveProfile()">保存</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">キャンセル</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // プロフィールデータ
-        let profileData = {
-            username: 'VRChatユーザー',
-            status: '🟢 オンライン',
-            bio: 'VRChatを楽しんでいます！色々なワールドを探索して、新しい人との出会いを大切にしています。',
-            avatar: '🎭'
-        };
-
-        // 編集モーダルを開く
-        function openEditModal() {
-            document.getElementById('editUsername').value = profileData.username;
-            document.getElementById('editStatus').value = profileData.status;
-            document.getElementById('editBio').value = profileData.bio;
-            document.getElementById('editAvatar').value = profileData.avatar;
-            document.getElementById('editModal').style.display = 'block';
-        }
-
-        // 編集モーダルを閉じる
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        // プロフィールを保存
-        function saveProfile() {
-            profileData.username = document.getElementById('editUsername').value || profileData.username;
-            profileData.status = document.getElementById('editStatus').value || profileData.status;
-            profileData.bio = document.getElementById('editBio').value || profileData.bio;
-            profileData.avatar = document.getElementById('editAvatar').value || profileData.avatar;
-
-            // 画面に反映
-            document.getElementById('username').textContent = profileData.username;
-            document.getElementById('status').textContent = profileData.status;
-            document.getElementById('bio').textContent = profileData.bio;
-            document.getElementById('avatarContainer').textContent = profileData.avatar;
-
-            closeEditModal();
-            
-            // 保存完了の通知
-            showNotification('プロフィールを更新しました！');
-        }
-
-        // 通知表示
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #4CAF50;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 5px;
-                z-index: 2000;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // モーダル外クリックで閉じる
-        document.getElementById('editModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeEditModal();
-            }
-        });
-
-        // アバタークリックでランダム絵文字
-        document.getElementById('avatarContainer').addEventListener('click', function() {
-            const emojis = ['🎭', '🦊', '🤖', '👑', '🌟', '🎨', '🎵', '🎮', '🌈', '⭐'];
-            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-            this.textContent = randomEmoji;
-            profileData.avatar = randomEmoji;
-        });
-    </script>
+    <script src="js/script.js"></script>
 </body>
 </html>

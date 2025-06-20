@@ -155,9 +155,9 @@ function createChart(canvasId, data, color) {
     // 直近10点だけ使う
     const plotData = data.slice(-10);
 
-    const padding = 32;
+    const padding = 44; // 上下左右のパディング
     const chartWidth = canvas.width - (padding * 2);
-    const chartHeight = canvas.height - (padding * 2);
+    const chartHeight = canvas.height - padding;
 
     const minVal = Math.min(...plotData.map(d => d.point));
     const maxVal = Math.max(...plotData.map(d => d.point));

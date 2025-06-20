@@ -2,36 +2,36 @@
 
 const API_BASE_URL = 'https://my-portfolio-server-d81x.onrender.com';
 
-// ブログ取得
-fetch(`${API_BASE_URL}/api/blogs`)
-  .then(res => {
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  })
-  .then(data => {
-    const container = document.querySelector('.blog-posts');
-    container.innerHTML = '';
-    data.slice(0, 3).forEach(post => {
-      const div = document.createElement('div');
-      div.className = 'blog-post';
+// // ブログ取得
+// fetch(`${API_BASE_URL}/api/blogs`)
+//   .then(res => {
+//     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+//     return res.json();
+//   })
+//   .then(data => {
+//     const container = document.querySelector('.blog-posts');
+//     container.innerHTML = '';
+//     data.slice(0, 3).forEach(post => {
+//       const div = document.createElement('div');
+//       div.className = 'blog-post';
 
-      const title = document.createElement('strong');
-      title.textContent = post.title;
+//       const title = document.createElement('strong');
+//       title.textContent = post.title;
 
-      const br = document.createElement('br');
+//       const br = document.createElement('br');
 
-      const date = document.createElement('small');
-      date.textContent = post.date;
+//       const date = document.createElement('small');
+//       date.textContent = post.date;
 
-      div.appendChild(title);
-      div.appendChild(br);
-      div.appendChild(date);
-      container.appendChild(div);
-    });
-  })
-  .catch(err => {
-    document.querySelector('.blog-posts').textContent = `取得できませんでした (${err.message})`;
-  });
+//       div.appendChild(title);
+//       div.appendChild(br);
+//       div.appendChild(date);
+//       container.appendChild(div);
+//     });
+//   })
+//   .catch(err => {
+//     document.querySelector('.blog-posts').textContent = `取得できませんでした (${err.message})`;
+//   });
 // ゲーム情報取得＋グラフ描画
 fetch(`${API_BASE_URL}/api/games`)
   .then(res => {

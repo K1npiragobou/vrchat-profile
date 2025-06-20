@@ -14,14 +14,25 @@ fetch(`${API_BASE_URL}/api/blogs`)
     data.slice(0, 3).forEach(post => {
       const div = document.createElement('div');
       div.className = 'blog-post';
-      div.innerHTML = `<strong>${post.title}</strong><br><small>${post.date}</small>`;
+
+      const title = document.createElement('strong');
+      title.textContent = post.title;
+
+      const br = document.createElement('br');
+
+      const date = document.createElement('small');
+      date.textContent = post.date;
+
+      div.appendChild(title);
+      div.appendChild(br);
+      div.appendChild(date);
       container.appendChild(div);
     });
   })
   .catch(err => {
-    document.querySelector('.blog-posts').innerHTML = `<div>取得できませんでした (${err.message})</div>`;
+    document.querySelector('.blog-posts').textContent = `取得できませんでした (${err.message})`;
   });
-// ゲーム情報取得
+// ゲーム情報取得＋グラフ描画
 fetch(`${API_BASE_URL}/api/games`)
   .then(res => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -29,13 +40,20 @@ fetch(`${API_BASE_URL}/api/games`)
   })
   .then(data => {
     data.forEach(game => {
-      const id = game.name.toLowerCase().includes('valorant') ? 'valorant' :
-                 game.name.toLowerCase().includes('apex') ? 'apex' : null;
-      if (!id) return;
-      const container = document.getElementById(id);
+      const container = document.getElementById(game.id);
       if (container) {
+        // ランク・ポイント表示
         container.querySelector('.rank').textContent = game.rank;
         container.querySelector('.rr').textContent = game.point;
+
+        // グラフ描画
+        if (game.history && Array.isArray(game.history) && game.history.length > 1) {
+          // 色はゲームごとに変えたい場合は分岐で
+          let color = '#4ecdc4';
+          if (game.id === 'streetfighter6') color = '#ff6b6b';
+          if (game.id === 'pokepoke') color = '#4ecdc4';
+          createChart(`${game.id}Chart`, game.history, color);
+        }
       }
     });
   })
@@ -122,62 +140,100 @@ fetch(`${API_BASE_URL}/tweets`)
     ul.innerHTML = `<li>取得できませんでした (${err.message})</li>`;
   });
 // Chart and animation setup
+function createChart(canvasId, data, color) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (!data || data.length < 2) {
+        ctx.fillStyle = '#aaa';
+        ctx.font = '14px sans-serif';
+        ctx.fillText('データが足りません', 30, canvas.height / 2);
+        return;
+    }
+
+    // 直近10点だけ使う
+    const plotData = data.slice(-10);
+
+    const padding = 32;
+    const chartWidth = canvas.width - (padding * 2);
+    const chartHeight = canvas.height - (padding * 2);
+
+    const minVal = Math.min(...plotData.map(d => d.point));
+    const maxVal = Math.max(...plotData.map(d => d.point));
+    const range = maxVal - minVal || 1;
+
+    // 点の座標計算
+    const points = plotData.map((d, i) => {
+        const x = padding + (i / (plotData.length - 1)) * chartWidth;
+        const y = padding + chartHeight - ((d.point - minVal) / range) * chartHeight;
+        return { x, y, date: d.date, point: d.point };
+    });
+
+    // 折れ線
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.stroke();
+
+    // 点
+    ctx.fillStyle = color;
+    points.forEach(point => {
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // 塗りつぶし
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.lineTo(points[points.length - 1].x, padding + chartHeight);
+    ctx.lineTo(points[0].x, padding + chartHeight);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // x軸ラベル（日付）は描画しない
+
+    // y軸ラベル（最小・最大）
+    ctx.fillStyle = '#444';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(maxVal, padding - 4, padding + 8);
+    ctx.fillText(minVal, padding - 4, padding + chartHeight);
+
+    // グラフの下に日付を外部表示
+    // 親要素（canvasの親）に日付ラベルを追加
+    const parent = canvas.parentElement;
+    let dateLabel = parent.querySelector('.chart-dates');
+    if (!dateLabel) {
+        dateLabel = document.createElement('div');
+        dateLabel.className = 'chart-dates';
+        dateLabel.style.fontSize = '10px';
+        dateLabel.style.color = '#888';
+        dateLabel.style.display = 'flex';
+        dateLabel.style.justifyContent = 'space-between';
+        dateLabel.style.marginTop = '2px';
+        parent.appendChild(dateLabel);
+    }
+    // 日付ラベルを更新
+    dateLabel.innerHTML = `
+        <span>${plotData[0].date.slice(0, 10)}</span>
+        <span>${plotData[plotData.length - 1].date.slice(0, 10)}</span>
+    `;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
-    const valorantData = [1200, 1180, 1220, 1250, 1240, 1280, 1300];
-    const apexData = [800, 850, 820, 880, 900, 950, 1000];
 
-    createChart('valorantChart', valorantData, '#ff6b6b');
-    createChart('apexChart', apexData, '#4ecdc4');
-
-    function createChart(canvasId, data, color) {
-        const canvas = document.getElementById(canvasId);
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const padding = 20;
-        const chartWidth = canvas.width - (padding * 2);
-        const chartHeight = canvas.height - (padding * 2);
-
-        const minVal = Math.min(...data);
-        const maxVal = Math.max(...data);
-        const range = maxVal - minVal;
-
-        const points = data.map((value, index) => {
-            const x = padding + (index / (data.length - 1)) * chartWidth;
-            const y = padding + chartHeight - ((value - minVal) / range) * chartHeight;
-            return { x, y };
-        });
-
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i].x, points[i].y);
-        }
-        ctx.stroke();
-
-        ctx.fillStyle = color;
-        points.forEach(point => {
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
-            ctx.fill();
-        });
-
-        ctx.globalAlpha = 0.3;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i].x, points[i].y);
-        }
-        ctx.lineTo(points[points.length - 1].x, padding + chartHeight);
-        ctx.lineTo(points[0].x, padding + chartHeight);
-        ctx.closePath();
-        ctx.fill();
-        ctx.globalAlpha = 1;
-    }
 
     const progressBars = document.querySelectorAll('.progress-fill');
     progressBars.forEach(bar => {

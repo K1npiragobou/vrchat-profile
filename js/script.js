@@ -3,8 +3,11 @@
 const API_BASE_URL = 'https://my-portfolio-server-d81x.onrender.com';
 
 // ブログ取得
-fetch(`${API_BASE_URL}/blogs`)
-  .then(res => res.json())
+fetch(`${API_BASE_URL}/api/blogs`)
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
   .then(data => {
     const container = document.querySelector('.blog-posts');
     container.innerHTML = '';
@@ -15,13 +18,15 @@ fetch(`${API_BASE_URL}/blogs`)
       container.appendChild(div);
     });
   })
-  .catch(() => {
-    document.querySelector('.blog-posts').innerHTML = '<div>取得できませんでした</div>';
+  .catch(err => {
+    document.querySelector('.blog-posts').innerHTML = `<div>取得できませんでした (${err.message})</div>`;
   });
-
 // ゲーム情報取得
-fetch(`${API_BASE_URL}/games`)
-  .then(res => res.json())
+fetch(`${API_BASE_URL}/api/games`)
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
   .then(data => {
     data.forEach(game => {
       const id = game.name.toLowerCase().includes('valorant') ? 'valorant' :
@@ -34,15 +39,18 @@ fetch(`${API_BASE_URL}/games`)
       }
     });
   })
-  .catch(() => {
+  .catch(err => {
     document.querySelectorAll('.game-item').forEach(item => {
-      item.innerHTML += '<div>取得失敗</div>';
+      item.innerHTML += `<div>取得失敗 (${err.message})</div>`;
     });
   });
 
 // ドラマ情報取得
-fetch(`${API_BASE_URL}/dramas`)
-  .then(res => res.json())
+fetch(`${API_BASE_URL}/api/dramas`)
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
   .then(data => {
     const container = document.querySelector('.drama-progress');
     container.innerHTML = ''; // 初期化
@@ -58,28 +66,60 @@ fetch(`${API_BASE_URL}/dramas`)
       container.appendChild(div);
     });
   })
-  .catch(() => {
-    document.querySelector('.drama-progress').innerHTML = '<div>取得失敗</div>';
+  .catch(err => {
+    document.querySelector('.drama-progress').innerHTML = `<div>取得失敗 (${err.message})</div>`;
   });
-// ツイート取得・表示
+// ツイート取得・表示（XSS対策あり）
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g, function(match) {
+    const escape = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+    return escape[match];
+  });
+}
+
+const ul = document.getElementById('tweet-list');
+ul.innerHTML = '<li>読み込み中...</li>'; // ここで最初に表示
+
 fetch(`${API_BASE_URL}/tweets`)
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
   .then(tweets => {
-    const ul = document.getElementById('tweet-list');
     ul.innerHTML = '';
     if (tweets && tweets.length > 0) {
       tweets.slice(0, 3).forEach(tweet => {
+        const user = tweet.user || {};
+        const profileImage = user.profile_image_url
+          ? escapeHTML(user.profile_image_url)
+          : 'https://abs.twimg.com/sticky/default_profile_images/default_profile.png'; // Twitter公式デフォルト画像
+
+        const userName = user.name ? escapeHTML(user.name) : '不明なユーザー';
+        const userUsername = user.username ? escapeHTML(user.username) : 'unknown';
+
         const li = document.createElement('li');
         li.className = 'tweet';
-        li.textContent = tweet.text;
+        li.innerHTML = `
+          <img src="${profileImage}" alt="${userName}" class="tweet-icon" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:8px;">
+          <span class="tweet-user" style="font-weight:bold;">${userName}</span>
+          <span class="tweet-username" style="color:#888;">@${userUsername}</span><br>
+          <span class="tweet-text">${escapeHTML(tweet.text)}</span>
+          <span class="tweet-date" style="display:block;color:#aaa;font-size:0.8em;">${new Date(tweet.created_at).toLocaleString('ja-JP')}</span>
+        `;
         ul.appendChild(li);
       });
     } else {
       ul.innerHTML = '<li>ツイートがありません</li>';
     }
   })
-  .catch(() => {
-    document.getElementById('tweet-list').innerHTML = '<li>取得できませんでした</li>';
+  .catch(err => {
+    ul.innerHTML = `<li>取得できませんでした (${err.message})</li>`;
   });
 // Chart and animation setup
 

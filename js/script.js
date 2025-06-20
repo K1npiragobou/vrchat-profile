@@ -1,49 +1,86 @@
 // script.js
 
-// Twitter埋め込み（これはHTML側にスクリプトタグが必要）
-// 通常はTwitterが自動で処理するのでJS側では何もしない
+const API_BASE_URL = 'https://my-portfolio-server-d81x.onrender.com';
 
-// ブログ記事の取得（例: noteの情報を自前APIで提供する場合）
-fetch("https://your-api.onrender.com/api/blogs")
-  .then((res) => res.json())
-  .then((data) => {
-    const blogContainer = document.querySelector(".blog-posts");
-    blogContainer.innerHTML = "";
-    data.forEach((post) => {
-      const article = document.createElement("article");
-      article.className = "blog-post";
-      article.innerHTML = `
-        <h4><a href="${post.url}" target="_blank">${post.title}</a></h4>
-        <p class="blog-date">${post.date}</p>
-        <p>${post.summary}</p>
+// ブログ取得
+fetch(`${API_BASE_URL}/blogs`)
+  .then(res => res.json())
+  .then(data => {
+    const container = document.querySelector('.blog-posts');
+    container.innerHTML = '';
+    data.slice(0, 3).forEach(post => {
+      const div = document.createElement('div');
+      div.className = 'blog-post';
+      div.innerHTML = `<strong>${post.title}</strong><br><small>${post.date}</small>`;
+      container.appendChild(div);
+    });
+  })
+  .catch(() => {
+    document.querySelector('.blog-posts').innerHTML = '<div>取得できませんでした</div>';
+  });
+
+// ゲーム情報取得
+fetch(`${API_BASE_URL}/games`)
+  .then(res => res.json())
+  .then(data => {
+    data.forEach(game => {
+      const id = game.name.toLowerCase().includes('valorant') ? 'valorant' :
+                 game.name.toLowerCase().includes('apex') ? 'apex' : null;
+      if (!id) return;
+      const container = document.getElementById(id);
+      if (container) {
+        container.querySelector('.rank').textContent = game.rank;
+        container.querySelector('.rr').textContent = game.point;
+      }
+    });
+  })
+  .catch(() => {
+    document.querySelectorAll('.game-item').forEach(item => {
+      item.innerHTML += '<div>取得失敗</div>';
+    });
+  });
+
+// ドラマ情報取得
+fetch(`${API_BASE_URL}/dramas`)
+  .then(res => res.json())
+  .then(data => {
+    const container = document.querySelector('.drama-progress');
+    container.innerHTML = ''; // 初期化
+    data.slice(0, 3).forEach(drama => {
+      const percent = Math.round((drama.progress / drama.total) * 100);
+      const div = document.createElement('div');
+      div.className = 'drama-item';
+      div.innerHTML = `
+        <h4>${drama.title}</h4>
+        <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%;"></div></div>
+        <span class="progress-text">${drama.progress} / ${drama.total}</span>
       `;
-      blogContainer.appendChild(article);
+      container.appendChild(div);
     });
+  })
+  .catch(() => {
+    document.querySelector('.drama-progress').innerHTML = '<div>取得失敗</div>';
   });
-
-// ゲームランク情報の取得
-fetch("https://your-api.onrender.com/api/games")
-  .then((res) => res.json())
-  .then((data) => {
-    document.querySelector("#valorant .rank").textContent = data.valorant.rank;
-    document.querySelector("#valorant .rr").textContent = data.valorant.rr;
-    document.querySelector("#apex .rank").textContent = data.apex.rank;
-    document.querySelector("#apex .rr").textContent = data.apex.rr;
+// ツイート取得・表示
+fetch(`${API_BASE_URL}/tweets`)
+  .then(res => res.json())
+  .then(tweets => {
+    const ul = document.getElementById('tweet-list');
+    ul.innerHTML = '';
+    if (tweets && tweets.length > 0) {
+      tweets.slice(0, 3).forEach(tweet => {
+        const li = document.createElement('li');
+        li.className = 'tweet';
+        li.textContent = tweet.text;
+        ul.appendChild(li);
+      });
+    } else {
+      ul.innerHTML = '<li>ツイートがありません</li>';
+    }
+  })
+  .catch(() => {
+    document.getElementById('tweet-list').innerHTML = '<li>取得できませんでした</li>';
   });
-
-// ドラマ進捗の取得
-fetch("https://your-api.onrender.com/api/dramas")
-  .then((res) => res.json())
-  .then((data) => {
-    const dramaItems = document.querySelectorAll(".drama-item");
-    data.forEach((drama, index) => {
-      const fill = dramaItems[index].querySelector(".progress-fill");
-      const text = dramaItems[index].querySelector(".progress-text");
-      fill.style.width = `${drama.progress}%`;
-      text.textContent = `${drama.episode}/${drama.total}話`;
-    });
-  });
-
 // Chart and animation setup
 
 document.addEventListener('DOMContentLoaded', function() {

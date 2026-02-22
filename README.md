@@ -6,6 +6,13 @@
 - 目的: VRChatの自己紹介ページ
 - ひとこと: まだ勉強中なので、コードは温かい目で見てもらえると嬉しいです。ページだけ見てもらえると助かります。
 
+## テンプレートについて
+
+このサイトは以下のAstroテンプレートをベースにカスタマイズしています。
+
+- テンプレート: https://github.com/veranikabarel/astro-portfolio
+- 作者: https://github.com/veranikabarel
+
 ## 開発
 
 - `npm install`

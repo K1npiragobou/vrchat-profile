@@ -1,0 +1,59 @@
+---
+import Footer from '@components/Footer.astro';
+import Navbar from '@components/Navbar.astro';
+import { SEO } from 'astro-seo';
+
+export interface LayoutProps {
+	title: string;
+	description?: string;
+}
+
+const { title = 'VRChat Profile', description = 'VRChatプロフィールサイト' } =
+	Astro.props as LayoutProps;
+---
+
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth" data-testid="html">
+	<head>
+		<SEO title={title} description={description} />
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap"
+			rel="stylesheet"
+		/>
+		<title>{title}</title>
+	</head>
+	<body class="mx-auto max-w-screen-xl bg-cream px-5 font-sans text-ink xs:text-[16px] md:text-[18px]">
+		<Navbar />
+		<slot />
+		<Footer />
+		<style is:global>
+			body {
+				background-image:
+					radial-gradient(circle at 12% 12%, rgba(255, 138, 61, 0.18), transparent 40%),
+					radial-gradient(circle at 88% 18%, rgba(31, 31, 38, 0.12), transparent 45%),
+					repeating-linear-gradient(
+						0deg,
+						rgba(31, 31, 38, 0.05) 0 1px,
+						transparent 1px 28px
+					),
+					repeating-linear-gradient(
+						90deg,
+						rgba(31, 31, 38, 0.04) 0 1px,
+						transparent 1px 28px
+					);
+				background-attachment: fixed;
+			}
+
+			img {
+				content-visibility: auto;
+			}
+		</style>
+	</body>
+</html>

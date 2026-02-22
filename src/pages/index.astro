@@ -1,0 +1,214 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { profile } from '@data/profile';
+import { getCollection } from 'astro:content';
+
+const baseUrl = import.meta.env.BASE_URL;
+const resolvePath = (path?: string) =>
+	path ? (path.startsWith('http') ? path : `${baseUrl}${path.replace(/^\\//, '')}`) : undefined;
+const avatarImage = resolvePath(profile.avatarImage);
+const placeholderImage = `${baseUrl}images/works/placeholder.png`;
+
+const projects = await getCollection('projects', ({ data }) => !data.inProgress);
+const featuredProjects = projects.slice(0, 3);
+const hasProjects = featuredProjects.length > 0;
+---
+
+<Layout title={`${profile.displayName} | VRChat`} description={profile.tagline}>
+	<main id="top" class="pb-16">
+		<section class="mt-4">
+			<div
+				class="relative overflow-hidden rounded-[32px] bg-white/85 p-6 shadow-[0_24px_50px_rgba(31,31,38,0.12)] ring-1 ring-ink/10"
+			>
+				<div class="flex flex-col items-center gap-6 text-center md:flex-row md:items-center md:text-left">
+					<div class="relative h-36 w-36 shrink-0 overflow-hidden rounded-[32px] ring-2 ring-white">
+						<img
+							src={avatarImage}
+							alt={`${profile.displayName}のアバター`}
+							class="h-full w-full object-cover"
+							loading="eager"
+						/>
+						<span
+							class="absolute bottom-3 right-3 h-3.5 w-3.5 rounded-full bg-orange ring-2 ring-white"
+							aria-hidden="true"
+						></span>
+					</div>
+					<div class="flex flex-col gap-3">
+						<p class="text-xs uppercase tracking-[0.3em] text-ink-soft">VRChat Profile</p>
+						<div>
+							<h1 class="text-3xl font-bold text-ink md:text-4xl">{profile.displayName}</h1>
+							{profile.displayReading && profile.displayReading !== profile.displayName && (
+								<p class="mt-1 text-sm text-ink-soft">{profile.displayReading}</p>
+							)}
+						</div>
+						<p class="text-base text-ink-soft">{profile.tagline}</p>
+						<div class="grid gap-2 text-sm text-ink">
+							<p>
+								<span class="rounded-full bg-orange-soft px-3 py-1 text-xs font-medium text-orange">VRChat</span>
+								<span class="ml-2">{profile.vrcName}</span>
+							</p>
+							<p>
+								<span class="rounded-full bg-orange-soft px-3 py-1 text-xs font-medium text-orange">活動時間</span>
+								<span class="ml-2">{profile.activity}</span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="tags" class="mt-10">
+			<div class="rounded-[28px] bg-white/80 p-6 ring-1 ring-ink/10">
+				<h2 class="text-lg font-bold text-ink">クイックタグ</h2>
+				<p class="mt-2 text-sm text-ink-soft">話しかけやすさの目印にどうぞ。</p>
+				<div class="mt-4 flex flex-wrap gap-2">
+					{profile.quickTags.map((tag) => (
+						<span class="rounded-full border border-orange/30 bg-white px-3 py-1 text-xs text-ink">
+							{tag}
+						</span>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section id="links" class="mt-10">
+			<div class="rounded-[28px] bg-white/80 p-6 ring-1 ring-ink/10">
+				<h2 class="text-lg font-bold text-ink">リンク</h2>
+				<p class="mt-2 text-sm text-ink-soft">押しやすさ重視で並べてます。</p>
+				<div class="mt-4 grid gap-3 md:grid-cols-2">
+					{profile.links.map((link) => (
+						<a
+							href={link.href}
+							target="_blank"
+							rel="noopener"
+							class="group flex items-center justify-between rounded-2xl border border-ink/10 bg-white px-4 py-3 text-left transition hover:-translate-y-0.5 hover:border-orange/60 hover:shadow-lg"
+						>
+							<div>
+								<p class="text-sm font-semibold text-ink">{link.label}</p>
+								<p class="text-xs text-ink-soft">{link.note}</p>
+							</div>
+							<span class="text-xs text-orange">Open</span>
+						</a>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section id="profile" class="mt-10 grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+			<div class="rounded-[28px] bg-white/85 p-6 ring-1 ring-ink/10">
+				<h2 class="text-lg font-bold text-ink">プロフィール</h2>
+				<p class="mt-2 text-sm text-ink-soft">好きなことや傾向をまとめました。</p>
+				<div class="mt-5 grid gap-5 md:grid-cols-3">
+					<div>
+						<p class="text-xs uppercase tracking-[0.2em] text-ink-soft">使用言語</p>
+						<ul class="mt-2 flex flex-wrap gap-2">
+							{profile.languages.map((lang) => (
+								<li class="rounded-full bg-orange-soft px-3 py-1 text-xs text-orange">{lang}</li>
+							))}
+						</ul>
+					</div>
+					<div>
+						<p class="text-xs uppercase tracking-[0.2em] text-ink-soft">よく行くワールド</p>
+						<ul class="mt-2 flex flex-wrap gap-2">
+							{profile.worlds.map((world) => (
+								<li class="rounded-full border border-ink/10 px-3 py-1 text-xs text-ink">{world}</li>
+							))}
+						</ul>
+					</div>
+					<div>
+						<p class="text-xs uppercase tracking-[0.2em] text-ink-soft">好きなアバター</p>
+						<ul class="mt-2 flex flex-wrap gap-2">
+							{profile.avatars.map((avatar) => (
+								<li class="rounded-full border border-ink/10 px-3 py-1 text-xs text-ink">{avatar}</li>
+							))}
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div id="status" class="rounded-[28px] bg-white/85 p-6 ring-1 ring-ink/10">
+				<h2 class="text-lg font-bold text-ink">ステータス</h2>
+				<p class="mt-2 text-sm text-ink-soft">遊び方の目安と、色の意味です。</p>
+				<dl class="mt-4 grid gap-3">
+					{profile.statusItems.map((item) => (
+						<div class="rounded-2xl border border-ink/10 bg-white px-4 py-3">
+							<dt class="text-xs uppercase tracking-[0.18em] text-ink-soft">{item.label}</dt>
+							<dd class="mt-1 text-sm font-medium text-ink">{item.value}</dd>
+						</div>
+					))}
+				</dl>
+				<div class="mt-5 grid gap-3 text-sm">
+					{profile.statusLegend.map((item) => (
+						<div class="flex items-start gap-3 rounded-2xl border border-ink/10 bg-white px-4 py-3">
+							<span class={`mt-1 h-3 w-3 rounded-full ${item.colorClass}`} aria-hidden="true"></span>
+							<div>
+								<p class="text-sm font-medium text-ink">{item.label}</p>
+								<p class="text-xs text-ink-soft">{item.description}</p>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section id="works" class="mt-12">
+			<div class="flex flex-wrap items-center justify-between gap-4">
+				<div>
+					<h2 class="text-lg font-bold text-ink">代表作</h2>
+					<p class="mt-1 text-sm text-ink-soft">Homeでは3つまで。</p>
+				</div>
+				<a
+					href={`${baseUrl}works/`}
+					class="rounded-full border border-orange/40 bg-white px-4 py-2 text-xs text-orange transition hover:-translate-y-0.5 hover:border-orange"
+				>
+					作品一覧を見る
+				</a>
+			</div>
+			{hasProjects ? (
+				<div class="mt-5 grid gap-4 md:grid-cols-3">
+					{featuredProjects.map((project) => (
+						<a
+							href={project.data.link}
+							target="_blank"
+							rel="noopener"
+							class="group flex h-full flex-col overflow-hidden rounded-3xl border border-ink/10 bg-white/90 transition hover:-translate-y-1 hover:shadow-xl"
+						>
+							<div class="aspect-[4/3] w-full overflow-hidden bg-orange-soft">
+								<img
+									src={resolvePath(project.data.image) ?? placeholderImage}
+									alt={project.data.img_alt ?? project.data.title}
+									class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+								/>
+							</div>
+							<div class="flex h-full flex-col gap-2 px-4 py-4">
+								<h3 class="text-base font-semibold text-ink">{project.data.title}</h3>
+								<p class="text-sm text-ink-soft">{project.data.description}</p>
+								<div class="mt-auto flex flex-wrap gap-2">
+									{project.data.tags.map((tag) => (
+										<span class="rounded-full border border-ink/10 px-2 py-0.5 text-[11px] text-ink-soft">
+											{tag}
+										</span>
+									))}
+								</div>
+							</div>
+						</a>
+					))}
+				</div>
+			) : (
+				<div class="mt-5 rounded-3xl border border-dashed border-ink/20 bg-white/80 px-6 py-10 text-center text-sm text-ink-soft">
+					作品は準備中です。完成したらここに追加していきます。
+				</div>
+			)}
+		</section>
+
+		<section class="mt-12">
+			<div class="rounded-[28px] bg-ink px-6 py-6 text-cream shadow-[0_20px_40px_rgba(31,31,38,0.25)]">
+				<p class="text-xs uppercase tracking-[0.28em] text-cream/70">Dev note</p>
+				<p class="mt-3 text-base font-medium">{profile.note}</p>
+				<p class="mt-2 text-xs text-cream/70">
+					status: <span class="font-monospace text-orange">casual_vrc_user</span>
+				</p>
+			</div>
+		</section>
+	</main>
+</Layout>

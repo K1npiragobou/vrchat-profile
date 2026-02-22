@@ -2,7 +2,7 @@
 
 学習用に作った自己紹介ページです。VRChatのプロフィールとして使う想定で作っています。
 
-- 公開ページ: https://piramura.github.io/vrchat-profile/
+- 公開ページ: https://K1npiragobou.github.io/vrchat-profile/
 - 目的: VRChatの自己紹介ページ
 - ひとこと: まだ勉強中なので、コードは温かい目で見てもらえると嬉しいです。ページだけ見てもらえると助かります。
 

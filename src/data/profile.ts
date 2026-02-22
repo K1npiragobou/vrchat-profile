@@ -1,5 +1,5 @@
 export const profile = {
-	displayName: 'きんぴらごぼう',
+	displayName: 'K1npiragobou',
 	displayReading: 'きんぴらごぼう',
 	vrcName: 'K1npiragobou',
 	tagline: '気分屋。のんびりVRするのが好き。',
@@ -16,13 +16,13 @@ export const profile = {
 		},
 		{
 			label: 'X',
-			href: 'https://x.com/k1npira_vrc',
-			note: '@k1npira_vrc'
+			href: 'https://x.com/k1npiragobou',
+			note: '@k1npiragobou'
 		},
 		{
 			label: 'GitHub',
-			href: 'https://github.com/piramura',
-			note: 'piramura'
+			href: 'https://github.com/K1npiragobou',
+			note: 'K1npiragobou'
 		}
 	],
 	statusItems: [

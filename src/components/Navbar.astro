@@ -3,27 +3,28 @@ import { Astronav, MenuIcon, MenuItems } from 'astro-navbar';
 import { profile } from '@data/profile';
 
 const baseUrl = import.meta.env.BASE_URL;
+const basePath = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
 const menuitems = [
 	{
 		title: 'Home',
-		path: `${baseUrl}`,
+		path: `${basePath}`,
 	},
 	{
 		title: 'プロフィール',
-		path: `${baseUrl}#profile`,
+		path: `${basePath}#profile`,
 	},
 	{
 		title: 'リンク',
-		path: `${baseUrl}#links`,
+		path: `${basePath}#links`,
 	},
 	{
 		title: 'ステータス',
-		path: `${baseUrl}#status`,
+		path: `${basePath}#status`,
 	},
 	{
 		title: 'Works',
-		path: `${baseUrl}works/`,
+		path: `${basePath}works/`,
 	},
 ];
 ---
@@ -32,7 +33,7 @@ const menuitems = [
 	<Astronav>
 		<div class="flex w-full items-center justify-between lg:w-auto">
 			<a
-				href={baseUrl}
+				href={basePath}
 				class="rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-ink shadow-sm ring-1 ring-ink/10"
 			>
 				{profile.vrcName}

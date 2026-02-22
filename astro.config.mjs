@@ -4,8 +4,8 @@ import icon from 'astro-icon';
 import { defineConfig, squooshImageService } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://piramura.github.io',
-  base: '/vrchat-profile',
+  site: 'https://K1npiragobou.github.io',
+  base: '/vrchat-profile/',
   integrations: [tailwind(), mdx(), icon({
     include: {
       mdi: ["*"]

@@ -16,8 +16,8 @@ export const profile = {
 		},
 		{
 			label: 'X',
-			href: 'https://x.com/k1npiragobou',
-			note: '@k1npiragobou'
+			href: 'https://x.com/k1npira_dev',
+			note: '@k1npira_dev'
 		},
 		{
 			label: 'GitHub',

@@ -29,21 +29,27 @@ const menuitems = [
 ];
 ---
 
-<header data-testId="header" class="my-6 flex flex-col items-center justify-between gap-4 lg:flex-row">
-	<Astronav>
-		<div class="flex w-full items-center justify-between lg:w-auto">
+<header
+	data-testId="header"
+	class="relative my-6 flex flex-col items-center justify-between gap-4 lg:flex-row"
+>
+	<Astronav closeOnClick>
+		<div class="relative flex w-full items-center justify-between lg:w-auto">
 			<a
 				href={basePath}
 				class="rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-ink shadow-sm ring-1 ring-ink/10"
 			>
 				{profile.vrcName}
 			</a>
-			<div class="block lg:hidden">
-				<MenuIcon class="h-4 w-4 text-ink" />
+			<div class="fixed right-5 top-5 z-[60] lg:hidden">
+				<MenuIcon class="h-5 w-5 text-ink" />
 			</div>
 		</div>
-		<MenuItems class="mt-2 hidden w-full lg:mt-0 lg:flex lg:w-auto">
-			<ul class="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-4">
+		<div class="astronav-toggle hidden fixed inset-0 z-30 bg-black/20 backdrop-blur-sm lg:hidden"></div>
+		<MenuItems
+			class="astronav-items astronav-toggle hidden fixed inset-0 z-40 flex h-full w-full flex-col items-center justify-center gap-6 bg-cream/95 px-6 py-20 text-center lg:static lg:inset-auto lg:z-auto lg:mt-0 lg:flex lg:h-auto lg:w-auto lg:flex-row lg:items-center lg:justify-end lg:bg-transparent lg:p-0 lg:text-left"
+		>
+			<ul class="flex flex-col gap-3 text-lg lg:flex-row lg:items-center lg:gap-4 lg:text-base">
 				{
 					menuitems.map((item) => (
 						<li>
@@ -60,4 +66,13 @@ const menuitems = [
 			</ul>
 		</MenuItems>
 	</Astronav>
+	<style is:global>
+		#astronav-menu {
+			border-radius: 9999px;
+			background: rgba(255, 255, 255, 0.9);
+			padding: 8px;
+			box-shadow: 0 10px 20px rgba(31, 31, 38, 0.12);
+			border: 1px solid rgba(31, 31, 38, 0.12);
+		}
+	</style>
 </header>
